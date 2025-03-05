@@ -1,86 +1,52 @@
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-
-// This file holds the main code for plugins. Code in this file has access to
-// the *figma document* via the figma global object.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
-
-
+// This plugin will open a window to prompt the user to create rectangles or formats.
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__);
+figma.showUI(__html__, { width: 300, height: 200 }); // Stelle sicher, dass die UI korrekt angezeigt wird
+
+// Define constant formats
+const formats = [
+  { name: 'Mobile', width: 375, height: 667 },
+  { name: 'Tablet', width: 768, height: 1024 },
+  { name: 'Desktop', width: 1440, height: 900 },
+  // Weitere Formate hier hinzufügen
+];
+
+// Function to create frames (artboards) with fixed sizes
+function createFixedFrames() {
+  console.log("Erstelle vordefinierte Arbeitsflächen");
+  const nodes: SceneNode[] = [];
+  formats.forEach((format, index) => {
+    const frame = figma.createFrame();
+    frame.resize(format.width, format.height);
+    frame.name = format.name;
+    frame.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
+    frame.x = index * (format.width + 20); // Abstand zwischen Arbeitsflächen
+    figma.currentPage.appendChild(frame);
+    nodes.push(frame);
+    console.log(`Arbeitsfläche ${format.name} erstellt`);
+  });
+
+  figma.currentPage.selection = nodes;
+  figma.viewport.scrollAndZoomIntoView(nodes);
+  figma.notify("Vordefinierte Arbeitsflächen erstellt!");
+}
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage =  (msg: {type: string, count: number}) => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
+figma.ui.onmessage = (msg: { type: string }) => {
+  console.log("Nachricht empfangen im Plugin:", msg);
+
   if (msg.type === 'create-shapes') {
-    // This plugin creates rectangles on the screen.
-    const numberOfRectangles = msg.count;
-
-    const nodes: SceneNode[] = [];
-    for (let i = 0; i < numberOfRectangles; i++) {
-      const rect = figma.createEllipse();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
-//////////////Test zum definieren Konstanter Formate//////////////
-    const formats = [
-      { name: 'Mobile', width: 375, height: 667 },
-      { name: 'Tablet', width: 768, height: 1024 },
-      { name: 'Desktop', width: 1440, height: 900 },
-      // Weitere Formate hier hinzufügen
-    ];
-//////////////TEst zum erstellen der Formate///////////////////////////
-function createFormats() {
-  const selection = figma.currentPage.selection;
-  if (selection.length === 0) {
-    figma.notify("Bitte wähle ein Frame aus.");
-    return;
-  }
-
-  const frame = selection[0];
-  if (frame.type !== 'FRAME') {
-    figma.notify("Bitte wähle ein gültiges Frame aus.");
-    return;
-  }
-
-  formats.forEach(format => {
-    const newFrame = figma.createFrame();
-    newFrame.resize(format.width, format.height);
-    newFrame.name = format.name;
-
-    // Kopiere die Eigenschaften vom ursprünglichen Frame
-    newFrame.x = frame.x + 10; // Versetze den neuen Frame, um Überlappung zu vermeiden
-    newFrame.y = frame.y + 10;
-    newFrame.fills = JSON.parse(JSON.stringify(frame.fills));
-    newFrame.strokes = JSON.parse(JSON.stringify(frame.strokes));
-    newFrame.strokeWeight = frame.strokeWeight;
-    newFrame.cornerRadius = frame.cornerRadius;
-
-    figma.currentPage.appendChild(newFrame);
-  });
-}
-
-figma.ui.onmessage = msg => {
-  if (msg.type === 'create-shapes') {
-    // Logik zum Erstellen von Ellipsen
+    console.log("Starte createFixedFrames für 'create-shapes'");
+    createFixedFrames();
   } else if (msg.type === 'create-formats') {
-    createFormats();
-  }
-};
-
-//////////////////////////////////////////////////////////////////
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
+    console.log("Starte createFixedFrames für 'create-formats'");
+    createFixedFrames(); // Use the same function for now
+  } else {
+    console.log("Unbekannter Nachrichtentyp:", msg.type);
   }
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
   figma.closePlugin();
 };
+

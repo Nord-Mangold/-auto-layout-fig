@@ -1,26 +1,14 @@
-<!-- <h2>Rectangle Creator</h2>
-<p>Count: <input id="count" type="number" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
-<script>
-
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-}
-
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
-
-</script> -->
-
-<h2>Layouts(s)erzeugen:</h2>
+<h2>Layouts(s) erzeugen:</h2>
+<button id="create-shapes">Vordefinierte Arbeitsflächen erstellen</button>
 <button id="create-formats">Formate erstellen</button>
 <script>
+  document.getElementById('create-shapes').onclick = () => {
+    console.log("Schaltfläche 'Vordefinierte Arbeitsflächen erstellen' geklickt");
+    parent.postMessage({ pluginMessage: { type: 'create-shapes' } }, '*');
+  };
+
   document.getElementById('create-formats').onclick = () => {
+    console.log("Schaltfläche 'Formate erstellen' geklickt");
     parent.postMessage({ pluginMessage: { type: 'create-formats' } }, '*');
   };
 </script>
-
