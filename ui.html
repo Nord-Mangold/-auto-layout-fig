@@ -17,5 +17,10 @@ document.getElementById('cancel').onclick = () => {
 </script> -->
 
 <h2>Layouts(s)erzeugen:</h2>
-<button id="social">Social</button>
-<button id ="email">email</button>
+<button id="create-formats">Formate erstellen</button>
+<script>
+  document.getElementById('create-formats').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'create-formats' } }, '*');
+  };
+</script>
+
