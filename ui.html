@@ -1,14 +1,10 @@
 <h2>Layouts(s) erzeugen:</h2>
 <button id="create-shapes">Vordefinierte Arbeitsflächen erstellen</button>
-<button id="create-formats">Formate erstellen</button>
+
 <script>
   document.getElementById('create-shapes').onclick = () => {
     console.log("Schaltfläche 'Vordefinierte Arbeitsflächen erstellen' geklickt");
     parent.postMessage({ pluginMessage: { type: 'create-shapes' } }, '*');
   };
 
-  document.getElementById('create-formats').onclick = () => {
-    console.log("Schaltfläche 'Formate erstellen' geklickt");
-    parent.postMessage({ pluginMessage: { type: 'create-formats' } }, '*');
-  };
 </script>
